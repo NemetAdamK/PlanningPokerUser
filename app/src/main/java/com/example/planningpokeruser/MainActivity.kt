@@ -8,6 +8,11 @@ import androidx.annotation.RequiresApi
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
 import android.text.Editable
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 
 
@@ -22,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        taskname.text = "Wait for next question"
         val database = FirebaseDatabase.getInstance()
         val myRef = database.reference.child("Questions").child("Group").child(roomId).orderByKey()
         myRef.addValueEventListener(object : ValueEventListener {
@@ -44,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
         questionName = taskname.text.toString()
-        taskname.addTextChangedListener(object : TextWatcher {
+        textViewSeconds.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable) {
                 if (questionName.equals("10")){
@@ -56,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 questionName = taskname.text.toString()
-                if (questionName.equals("10")){
+                if (textViewSeconds.equals("10")){
                     ShowFragmentOne()
                 }
             }
@@ -76,15 +83,6 @@ class MainActivity : AppCompatActivity() {
         transaction.addToBackStack(null)
         transaction.commit()
         isFragmentOneLoaded = true
-    }
-
-    fun ShowFragmentTwo() {
-        val transaction = manager.beginTransaction()
-        val fragment = FragmentTwo()
-        transaction.replace(R.id.fragment_holder, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
-        isFragmentOneLoaded = false
     }
 
 

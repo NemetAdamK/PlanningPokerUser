@@ -2,6 +2,7 @@ package com.example.planningpokeruser
 
 import android.content.Context
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -19,9 +20,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 
+
+
+
+
+
 class FragmentTwo : Fragment() {
 
     val TAG = "FragmentTwo"
+    var textView: TextView? = null
 
 
     private var mRecyclerView: RecyclerView? = null
@@ -71,6 +78,7 @@ class FragmentTwo : Fragment() {
         return users
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.d(TAG, "onCreateView")
         //return inflater!!.inflate(R.layout.fragment_two,container,false)
@@ -82,10 +90,44 @@ class FragmentTwo : Fragment() {
 
         loadWithData()
 
-
+        seeData()
         return rootView
     }
 
+
+
+    private fun seeData() {
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.reference.child("Questions").child("Group").child(roomId).orderByKey()
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (ds in dataSnapshot.children) {
+                    val QuestionResult = ds.getValue(Question::class.java)
+                    if (QuestionResult?.activit == false && QuestionResult.question== questionName) {
+                        val timer = object: CountDownTimer(2000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {
+
+                            }
+
+                            override fun onFinish() {
+                                val textview =
+                                    activity!!.findViewById(R.id.taskname) as TextView
+                                textview.text = "Wait for next question"
+                                fragmentManager?.popBackStackImmediate()
+
+                            }
+                        }
+                        timer.start()
+                    }
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
+    }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
