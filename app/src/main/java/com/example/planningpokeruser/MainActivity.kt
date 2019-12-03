@@ -11,9 +11,11 @@ import android.text.Editable
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
-
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import kotlinx.android.synthetic.main.dialog_add_question.view.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -83,6 +85,42 @@ class MainActivity : AppCompatActivity() {
         transaction.addToBackStack(null)
         transaction.commit()
         isFragmentOneLoaded = true
+    }
+
+    fun newGroupClicked(view: View) {
+        val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_question, null)
+        //AlertDialogBuilder
+        val mBuilder = AlertDialog.Builder(this)
+            .setView(mDialogView)
+            .setTitle("Go to now group")
+        //show dialog
+        val mAlertDialog = mBuilder.show()
+        //login button click of custom layout
+        mDialogView.dialogLoginBtn.setOnClickListener {
+            //dismiss dialog
+
+            mAlertDialog.dismiss()
+            //get text from EditTexts of custom layout
+            val newRoom = mDialogView.dialogQuestion.text.toString()
+
+            if (newRoom.isNotEmpty()){
+                roomId=newRoom
+                finish()
+                startActivity(getIntent())
+
+            }
+            else
+            {
+                Toast.makeText(applicationContext,"Empty field", Toast.LENGTH_SHORT).show()
+            }
+            mAlertDialog.dismiss()
+        }
+        //cancel button click of custom layout
+        mDialogView.dialogCancelBtn.setOnClickListener {
+            //dismiss dialog
+            mAlertDialog.dismiss()
+        }
+
     }
 
 

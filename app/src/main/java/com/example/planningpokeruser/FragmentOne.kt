@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -50,13 +51,20 @@ class FragmentOne : Fragment() {
         var optionsList : ArrayList<String> = ArrayList()
 
         rootView.btn_vote.setOnClickListener(){
-            addVoteData(currentVote.toString())
-            val newFragment = FragmentTwo()
-            val transaction = fragmentManager!!.beginTransaction()
-            transaction.replace(R.id.fragment_holder, newFragment)
-            transaction.addToBackStack(null)
+            val taskSeconds =
+                getActivity()!!.findViewById<TextView>(R.id.textViewSeconds)
+            if (taskSeconds.text.toString() == "0") {
+                Toast.makeText(context, "Time expired", Toast.LENGTH_LONG).show()
+            }else {
+                addVoteData(currentVote.toString())
+                val newFragment = FragmentTwo()
+                val transaction = fragmentManager!!.beginTransaction()
+                transaction.replace(R.id.fragment_holder, newFragment)
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
 
-            transaction.commit()
+
         }
         for(i in 1..10){
             optionsList.add(i.toString())
@@ -95,7 +103,19 @@ class FragmentOne : Fragment() {
         val database = FirebaseDatabase.getInstance()
         val userReference = database.reference
 
-        userReference.child("Answers").child("Group").child(roomId).push().setValue(
+        val taskSeconds =
+            getActivity()!!.findViewById<TextView>(R.id.textViewSeconds)
+        if (taskSeconds.text.equals("0")) {
+            userReference.child("Answers").child("Group").child(roomId).push().setValue(
+                VotedUsers(
+                    userName,
+                    "I'm an idiot and cannot vote in time",
+                    roomId,
+                    questionName
+                )
+            )
+        } else {
+            userReference.child("Answers").child("Group").child(roomId).push().setValue(
                 VotedUsers(
                     userName,
                     voteString,
@@ -103,7 +123,7 @@ class FragmentOne : Fragment() {
                     questionName
                 )
             )
-
+        }
 
     }
 

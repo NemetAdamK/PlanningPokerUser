@@ -19,9 +19,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
-
-
-
+import android.app.Activity
+import kotlinx.android.synthetic.main.activity_main.view.*
+import java.lang.Exception
 
 
 
@@ -29,6 +29,7 @@ class FragmentTwo : Fragment() {
 
     val TAG = "FragmentTwo"
     var textView: TextView? = null
+    var activity: MainActivity? = null
 
 
     private var mRecyclerView: RecyclerView? = null
@@ -110,9 +111,15 @@ class FragmentTwo : Fragment() {
                             }
 
                             override fun onFinish() {
-                                val textview =
-                                    activity!!.findViewById(R.id.taskname) as TextView
-                                textview.text = "Wait for next question"
+
+                                try{
+                                    val taskNm =
+                                        getActivity()!!.findViewById<TextView>(R.id.taskname)
+                                    taskNm.text = "Wait for next question"
+                                } catch (e: Exception){
+
+                                }
+
                                 fragmentManager?.popBackStackImmediate()
 
                             }
